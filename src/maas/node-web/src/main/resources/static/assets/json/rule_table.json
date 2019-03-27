@@ -1,0 +1,27 @@
+{
+  "msg": "查询成功",
+  "obj": {
+    "otherData": {},
+    "page": 0,
+    "pageSize": 0,
+    "rows": [
+      {
+        "createBy": "XXX",
+        "createDate": "2018-10-24T04:58:57.406Z",
+        "enable_": 0,
+        "id": "11111",
+        "lastUpdateBy": "111",
+        "lastUpdateDate": "2018-10-24T04:58:57.406Z",
+        "remake": "afd",
+        "ruleName": "1111",
+        "ruleProperty": "1111",
+        "ruleStatus": 0,
+        "ruleType": 0,
+        "ruleValue": 0,
+        "sort": 0
+      }
+    ],
+    "total": 1
+  },
+  "success": true
+}

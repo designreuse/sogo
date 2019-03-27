@@ -1,0 +1,38 @@
+{
+  "data": [
+    {
+      "text": "首页",
+      "icon": "&#xe68e;",
+      "subset":[
+        {
+          "text": "平台首页",
+          "icon": "&#xe61c;",
+          "href": "demo/welcome.html"
+        }
+      ]
+
+    },
+    {
+      "text": "调度单管理",
+      "icon": "&#xe68e;",
+      "subset":[
+        {
+          "text": "待抢单",
+          "icon": "&#xe630;",
+          "href": "trade/pending-order-dot.html"
+        },
+
+        {
+          "text": "已抢单",
+          "icon": "&#xe630;",
+          "href": "trade/already-robbed-master.html"
+        },{
+          "text":"已派单",
+          "icon": "&#xe630;",
+          "href": "trade/already-dispatched-master.html"
+        }
+      ]
+
+    }
+  ]
+}
