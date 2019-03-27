@@ -1,0 +1,15 @@
+spring:
+  profiles:
+    active: prod
+  application:
+    name: user-web
+server:
+  port: 8098
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 60000
+        loggerLevel: basic

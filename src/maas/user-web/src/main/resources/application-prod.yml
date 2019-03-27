@@ -1,0 +1,35 @@
+spring:
+  redis:
+#    hostName: maas2
+#    port: 6379
+    hostName: 183.62.69.35
+    port: 18008
+    database: 2
+    password: Admin001
+  kafka:
+    consumer:
+      group-id: kafka
+    bootstrap-servers: localhost:9092
+  jackson:
+    time-zone: Asia/Shanghai
+#    bootstrap-servers: 10.13.131.176:9094
+
+
+# 日志配置
+logging:
+  level:
+    org.springframework.web: info
+    com.github.binarywang.demo.wx.miniapp: info
+    cn.binarywang.wx.miniapp: info
+
+# 微信小程序参数配置
+wx:
+  miniapp:
+    configs:
+      - appid: wx1a5b0ee65f79eded
+        secret: e3cddb784dcf245cf8a88983ee14ef1f
+        msgDataFormat: JSON
+
+# 保存用户位置
+userLocation:
+    saveUserLocation: userLocation

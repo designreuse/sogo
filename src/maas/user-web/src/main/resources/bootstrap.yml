@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: buss-web
+  cloud:
+    config:
+      name: buss-web
+      discovery:
+        service-id: config-service
+        enabled: true
+      retry:
+        initial-interval: 2000
+        max-interval: 10000
+        multiplier: 2
+        max-attempts: 10
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    region: default
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+---
+spring:
+  profiles: docker
+  application:
+    name: buss-web
+  cloud:
+    config:
+      name: buss-web
+      fail-fast: true
+      discovery:
+        service-id: config-service
+        enabled: true
+      retry:
+        initial-interval: 2000
+        max-interval: 10000
+        multiplier: 2
+        max-attempts: 10
+eureka:
+  instance:
+    hostname: buss-web
+    prefer-ip-address: ${PREFER_IP_ADDRESS}
+    ip-address: ${IP_ADDRESS}
+  client:
+    region: default
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: ${DEFAULT_ZONE}

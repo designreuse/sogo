@@ -1,0 +1,30 @@
+spring:
+  profiles: docker
+  application:
+    name: user-web
+
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    database: 2
+  kafka:
+    consumer:
+      group-id: kafka-docker
+    bootstrap-servers: ${KAFKA_SERVERS}
+  jackson:
+    time-zone: Asia/Shanghai
+server:
+  port: 8098
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 60000
+        loggerLevel: basic
+user-web:
+  base-path: /user-web
+  check-login-and-redir-url: /asms/login/asms/checkLogin
+  session-name: scheduling-session
+  asms-host: ${ASMS_HOST}
+  get-login-username-url: /asms/login/asms/token2bh
