@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TRegionDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TRegionDto">
+        <id column="id" property="id" />
+        <result column="region_short_name" property="regionShortName" />
+        <result column="region_code" property="regionCode" />
+        <result column="region_name" property="regionName" />
+        <result column="region_type" property="regionType" />
+        <result column="region_parent_id" property="regionParentId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, region_short_name, region_code, region_name, region_type, region_parent_id
+    </sql>
+
+</mapper>

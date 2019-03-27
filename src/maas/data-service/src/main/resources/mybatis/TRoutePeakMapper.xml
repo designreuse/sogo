@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TRoutePeakDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TRoutePeakDto">
+        <id column="id" property="id"/>
+        <result column="line_id" property="lineId"/>
+        <result column="driver_user_id" property="driverUserId"/>
+        <result column="line_start_id" property="lineStartId"/>
+        <result column="line_end_id" property="lineEndId"/>
+        <result column="off_num" property="offNum"/>
+        <result column="on_num" property="onNum"/>
+        <result column="via_num" property="viaNum"/>
+        <result column="total_mile" property="totalMile"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_id" property="createId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_id" property="updateId"/>
+        <result column="line_name" property="lineName"/>
+        <result column="line_state" property="lineState"/>
+        <result column="lineStartName" property="lineStartName"/>
+        <result column="lineEndName" property="lineEndName"/>
+        <result column="time_lip" property="timeLip"/>
+        <result column="createName" property="createName"/>
+        <result column="driver_id" property="driverId"/>
+        <result column="route_state" property="routeState" />
+        <result column="area_path" property="areaPath"/>
+        <result column="car_id" property="carId"/>
+    </resultMap>
+
+    <select id="routePeakList" resultMap="BaseResultMap">
+        select tsu.username as createName,
+               t1.site_name as lineStartName,
+               t2.site_name as lineEndName,
+               line.*,
+               line_name,
+               line_state,
+               timelip      as time_lip,
+               area_path
+        from t_line line
+                 left join t_station t1 on (t1.id = line.line_start_id)
+                 left join t_station t2 on (t2.id = line.line_end_id)
+                 left join t_sys_user tsu on (tsu.id = line.create_id)
+        where 1=1
+        <if test='dateType == "0"'>
+            and  line.create_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <if test='dateType == "1"'>
+            and  line.update_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <if test="lineState !=null and lineState!=''">
+            and line_state = #{lineState}
+        </if>
+        <if test="lineName !=null and lineName!=''">
+            and line_name like concat(concat(#{lineName}),'%')
+        </if>
+        <if test="areaPath !=null and areaPath!=''">
+            and line.area_path like concat(concat(#{areaPath}),'%')
+        </if>
+
+
+    </select>
+
+    <select id="getByCarId" resultMap="BaseResultMap">
+        select tldb.line_id,tldb.driver_id from  t_car car left join t_driver_car_bind tdcb on (tdcb.car_id=car.id )
+                                                           left join t_line_driver_bind tldb on (tldb.driver_id=tdcb.driver_id)
+                                                           left join t_line line on (line.id =tldb.line_id)
+        where car.id=#{carId} and line.line_state = '0' and  tdcb.bind_status='1'
+    </select>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,route_state, line_id, driver_user_id, line_start_id, line_end_id, off_num, on_num, via_num, total_mile, start_date, end_date, create_date, create_id, update_date, update_id,car_id
+    </sql>
+
+    <select id="getByRouteId" resultMap="BaseResultMap">
+      SELECT id,line_id,driver_user_id,create_date,create_id,update_date,update_id FROM t_route_peak WHERE id=#{routeId}
+    </select>
+
+    <select id="queryRouteLineList" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+        select
+                r.id route_id , l.id  line_id , r.driver_user_id driver_user_id
+        FROM
+          t_route_peak  r LEFT JOIN t_line l on r.line_id = l.id
+        <where>
+            route_state = '0'
+            <if test="lineState != null and line_state != ''">
+              and l.line_state = '1'
+            </if>
+        </where>
+    </select>
+
+</mapper>

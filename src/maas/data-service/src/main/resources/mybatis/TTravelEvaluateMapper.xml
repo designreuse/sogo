@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TTravelEvaluateDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TTravelEvaluateDto">
+        <id column="id" property="id"/>
+        <result column="driver_user_id" property="driverUserId"/>
+        <result column="route_id" property="routeId"/>
+        <result column="content" property="content"/>
+        <result column="user_id" property="userId"/>
+        <result column="start_no" property="startNo"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_id" property="createId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_id" property="updateId"/>
+        <result column="car_env_start_no" property="carEnvStartNo"/>
+        <result column="route_type" property="routeType"/>
+        <result column="order_id" property="orderId"/>
+        <result column="start_name" property="startName"/>
+        <result column="end_name" property="endName"/>
+        <result column="name" property="name"/>
+        <result column="nick" property="nick"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="order_type" property="orderType"/>
+        <result column="ticket_type" property="ticketType"/>
+        <result column="ride_start_date" property="rideStartDate"/>
+        <result column="ride_end_date" property="rideEndDate"/>
+        <result column="site_dis" property="siteDis"/>
+    </resultMap>
+
+    <!-- <insert id="saveTravelEvaluate" parameterType="com.yihexinda.data.dto.TTravelEvaluateDto">
+         <selectKey keyProperty="id" order="BEFORE" resultType="java.lang.String">
+             SELECT UUID()
+         </selectKey>
+     insert into t_travel_evaluate <include refid="Base_Column_List"></include> values(id,driverUserId,routeId,content,userId,startNo,createDate,createId,updateDate,updateId)
+
+     </insert>
+ -->
+    <resultMap id="hashMap" type="java.util.HashMap">
+        <!--订单ID-->
+        <result column="id" property="id"/>
+        <!-- 用户ID-->
+        <result column="user_id" property="userId"/>
+        <!--用户昵称-->
+        <result column="nick" property="nick"/>
+        <!--司机id-->
+        <result column="driver_user_id" property="driverUserId"/>
+        <!--用车状态-->
+        <result column="order_type" property="orderType"/>
+        <!-- 行程类型-->
+
+        <!--购票类型-->
+        <result column="ticket_type" property="ticketType"/>
+        <!--星级-->
+        <result column="start_no" property="startNo"/>
+        <!--评价内容-->
+        <result column="content" property="content"/>
+        <!--上车站点-->
+        <result column="start_station_id" property="startStationId"/>
+        <!--下车站点-->
+        <result column="end_station_id" property="endStationId"/>
+        <!--站点距离-->
+        <result column="site_dis" property="siteDis"/>
+
+        <!--  &lt;!&ndash;上車時間&ndash;&gt;
+          <result column="end_station_id" property="endStationId"/>
+          &lt;!&ndash;下車時間&ndash;&gt;
+          <result column="end_station_id" property="endStationId"/>-->
+
+
+    </resultMap>
+
+    <select id="travelEvaluateList" resultMap="BaseResultMap">
+        select t1.site_name as start_name,
+               t2.site_name as end_name,
+               driver.name,
+               tu.nick,
+               order_no,
+               order_type,
+               ticket_type,
+               ride_start_date,
+               ride_end_date,
+               site_dis,
+               tte.*
+        from t_travel_evaluate tte
+                 left join t_order o on (o.id = tte.order_id)
+                 left join t_user tu on (tu.id = tte.user_id)
+                 left join t_driver driver on (driver.id = tte.driver_user_id)
+                 left join t_station t1 on (t1.id = o.start_station_id)
+                 left join t_station t2 on (t2.id = o.end_station_id)
+        where 1=1
+
+        <if test="nick !=null and nick != ''">
+            and tu.nick like concat(concat(#{nick}),'%')
+        </if>
+        <if test="orderNo !=null and orderNo != ''">
+            and order_no like concat(concat(#{orderNo}),'%')
+        </if>
+        <if test="name !=null and name != ''">
+            and driver.name like concat(concat(#{name}),'%')
+        </if>
+        <if test="orderType !=null and orderType != ''">
+            and o.order_type = #{orderType}
+        </if>
+        <if test="routeType !=null and routeType != ''">
+            and tte.route_type = #{routeType}
+        </if>
+        <if test="dateType =='0'.toString()">
+            and ride_start_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <if test="dateType =='1'.toString()">
+            and ride_end_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        order by  tte.create_date desc
+    </select>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, driver_user_id, route_id, content, user_id, start_no, create_date, create_id, update_date, update_id,car_env_start_no
+    </sql>
+
+    <select id="getTravelEvaluateManager" resultMap="hashMap">
+        select o.id,
+               o.user_id,
+               e.driver_user_id,
+               o.order_type,
+               o.ticket_type,
+               e.start_no,
+               e.content,
+               o.start_station_id,
+               o.end_station_id,
+               o.site_dis
+        from t_order o,
+             t_travel_evaluate e
+        where e.route_id = o.route_id
+    </select>
+
+</mapper>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TBroadcastDao">
+
+	<!-- 通用查询映射结果 -->
+	<resultMap id="BaseResultMap"
+		type="com.yihexinda.data.dto.TBroadcastDto">
+		<id column="id" property="id" />
+		<result column="broadcast_info" property="broadcastInfo" />
+		<result column="status" property="status" />
+		<result column="offline_time" property="offlineTime" />
+		<result column="online_time" property="onlineTime" />
+		<result column="create_date" property="createDate" />
+		<result column="create_id" property="createId" />
+		<result column="update_date" property="updateDate" />
+		<result column="update_id" property="updateId" />
+	</resultMap>
+
+	<!-- 通用查询结果列 -->
+	<sql id="Base_Column_List">
+		id,broadcast_info, status, offline_time, online_time,
+		create_date,
+		create_id, update_date, update_id
+	</sql>
+
+	<select id="getBroadcastList" parameterType="java.lang.String" resultType="com.yihexinda.data.dto.TBroadcastDto">
+		<![CDATA[
+			SELECT
+				bt.broadcast_info  FROM  t_broadcast bt,t_boradcast_time_range tbm
+			 WHERE
+				 bt. ID = tbm.boradcast_id AND tbm.start_date <= CURRENT_TIME AND tbm.end_date >= CURRENT_TIME
+				 AND bt.online_time <= CURRENT_DATE AND bt.offline_time >= CURRENT_DATE
+				  and bt.status = '1'
+			]]>
+	</select>
+</mapper>

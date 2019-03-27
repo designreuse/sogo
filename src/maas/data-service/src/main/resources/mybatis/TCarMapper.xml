@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TCarDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TCarDto">
+        <id column="id" property="id" />
+        <result column="type" property="type" />
+        <result column="pass_nums" property="passNums" />
+        <result column="license" property="license" />
+        <result column="car_no" property="carNo" />
+        <result column="status" property="status" />
+        <result column="area_id" property="areaId" />
+        <result column="area_path" property="areaPath" />
+        <result column="detail_addr" property="detailAddr" />
+        <result column="create_date" property="createDate" />
+        <result column="create_id" property="createId" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_id" property="updateId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, type, pass_nums, license, car_no, status, area_id, area_path, detail_addr, create_date, create_id, update_date, update_id
+    </sql>
+
+    <select id="selectCarts" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select <include refid="Base_Column_List"/> from t_car
+    </select>
+
+    <select id="getCarCount" resultType="java.lang.Integer">
+        select  sum(pass_nums) from t_car where status= '1'
+    </select>
+
+
+
+</mapper>

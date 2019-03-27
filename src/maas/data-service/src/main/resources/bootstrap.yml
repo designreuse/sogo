@@ -1,0 +1,49 @@
+spring:
+  application:
+    name: data-service
+  cloud:
+    config:
+      name: data-service
+      discovery:
+        service-id: config-service
+        enabled: true
+      retry:
+        initial-interval: 2000
+        max-interval: 10000
+        multiplier: 2
+        max-attempts: 10
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    region: default
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+---
+spring:
+  profiles: docker
+  application:
+    name: data-service
+  cloud:
+    config:
+      name: data-service
+      fail-fast: true
+      discovery:
+        service-id: config-service
+        enabled: true
+      retry:
+        initial-interval: 2000
+        max-interval: 10000
+        multiplier: 2
+        max-attempts: 10
+eureka:
+  instance:
+    hostname: data-service
+    prefer-ip-address: ${PREFER_IP_ADDRESS}
+    ip-address: ${IP_ADDRESS}
+  client:
+    region: default
+    registryFetchIntervalSeconds: 5
+    serviceUrl:
+      defaultZone: ${DEFAULT_ZONE}

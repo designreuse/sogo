@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TDriverCarBindDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TDriverCarBindDto">
+        <id column="id" property="id"/>
+        <result column="driver_id" property="driverId"/>
+        <result column="car_id" property="carId"/>
+        <result column="bind_status" property="bindStatus"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_id" property="createId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_id" property="updateId"/>
+        <result column="name" property="name"/>
+        <result column="car_no" property="carNo"/>
+        <result column="type" property="type"/>
+        <result column="pass_nums" property="passNums"/>
+    </resultMap>
+
+    <select id="getList" resultMap="BaseResultMap">
+        select tdcb.create_date,tdcb.update_date,driver.name,driver.id,car.car_no,car.type,car.pass_nums
+        from t_driver_car_bind tdcb,
+             t_driver driver,
+             t_car car
+        where tdcb.driver_id = driver.id
+          and tdcb.car_id = car.id;
+    </select>
+
+    <select id="getDriverId" resultMap="BaseResultMap">
+        SELECT *
+        from t_driver_car_bind
+        where driver_id = #{driverId}
+          and bind_status = '1'
+    </select>
+
+    <select id="getDriverCarBind" resultMap="BaseResultMap">
+        select tdcb.driver_id,
+               tdcb.create_date,
+               tdcb.update_date,
+               driver.name,
+               driver.id,
+               car.car_no,
+               car.type,
+               car.pass_nums
+        from t_driver_car_bind tdcb
+                 left join t_driver driver on (driver.id = tdcb.driver_id)
+                 left join t_car car on (car.id = tdcb.car_id)
+        where tdcb.driver_id = #{driverId}
+        <!-- 绑定时间 -->
+        <if test="dateType == '0'.toString()">
+            and tdcb.create_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <!-- 解绑时间 -->
+        <if test="dateType == '1'.toString()">
+            and tdcb.update_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <if test="type !=null and type!=''">
+            and car.type = #{type}
+        </if>
+        order by  tdcb.create_date desc
+    </select>
+
+    <!--获取司机登陆的时候所有绑定与未绑定车辆-->
+    <select id="getCarAndBindStatusList" resultMap="BaseResultMap">
+        select tdcb.create_date,tdcb.update_date,tdcb.bind_status,tdcb.driver_id,tdcb.car_id,car.car_no
+        from t_driver_car_bind tdcb,
+             t_car car
+        where tdcb.car_id = car.id;
+
+    </select>
+    <!--司机端查询司机当前车辆绑定记录列表-->
+    <select id="getCarBindList" resultMap="BaseResultMap">
+        select tdcb.create_date,tdcb.update_date,tdcb.bind_status,tdcb.driver_id,tdcb.car_id,car.car_no
+        from t_driver_car_bind tdcb,
+             t_car car
+        where tdcb.car_id = car.id
+          and tdcb.driver_id = #{driverId}
+          and bind_status = '1';
+
+    </select>
+
+    <update id="updateStatus" flushCache="true">
+        update t_driver_car_bind
+        set bind_status ='2',
+        update_date = now()
+        where bind_status='1'
+    </update>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id,
+        driver_id,
+        car_id,
+        bind_status,
+        create_date,
+        create_id,
+        update_date,
+        update_id
+    </sql>
+
+</mapper>

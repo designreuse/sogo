@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TRouteOffpeakDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TRouteOffpeakDto">
+        <id column="id" property="id" />
+        <result column="driver_user_id" property="driverUserId" />
+        <result column="car_id" property="carId" />
+        <result column="route_state" property="routeState" />
+        <result column="create_date" property="createDate" />
+        <result column="create_id" property="createId" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_id" property="updateId" />
+        <result column="midway_station" property="midwayStation" />
+        <result column="curr_station" property="currStation" />
+        <result column="all_position" property="allPosition" />
+        <result column="start_date" property="startDate" />
+        <result column="end_date" property="endDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, driver_user_id, car_id,route_state, create_date, create_id, update_date, update_id,midway_station,curr_station,all_position,start_date,end_date
+    </sql>
+
+    <update id="batchUpdateRouteOffpeak" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" separator=";">
+            UPDATE
+            t_route_offpeak
+            <set>
+                <if test="item.midwayStation != null">
+                    midway_station = #{item.midwayStation},
+                </if>
+                <if test="item.currStation != null">
+                    curr_station = #{item.currStation},
+                </if>
+                <if test="item.allPosition != null">
+                    all_position = #{item.allPosition},
+                </if>
+            </set>
+            <where>
+                id = #{item.id}
+            </where>
+        </foreach>
+    </update>
+
+</mapper>

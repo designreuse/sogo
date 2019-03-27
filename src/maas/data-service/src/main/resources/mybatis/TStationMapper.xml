@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TStationDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TStationDto">
+        <id column="id" property="id" />
+        <result column="link_id" property="linkId" />
+        <result column="longitude" property="longitude" />
+        <result column="latitude" property="latitude" />
+        <result column="site_name" property="siteName" />
+        <result column="site_remark" property="siteRemark" />
+        <result column="status" property="status" />
+        <result column="create_date" property="createDate" />
+        <result column="create_id" property="createId" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_id" property="updateId" />
+        <result column="region_id" property="regionId" />
+        <result column="type" property="type" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, link_id, longitude, latitude, site_name, site_remark, status, create_date, create_id, update_date, update_id,region_id,type
+    </sql>
+
+    <select id="loadPeakLineStations" resultType="java.util.HashMap" parameterType="java.util.HashMap">
+        select
+            a.line_id as line_id,
+            a.station_id as id,
+            a.line_name as line_name,
+            a.type as type,
+            b.site_name as site_name
+        from t_via a join t_station b
+          on a.station_id = b.id
+        join t_line c
+          on a.line_id = c.id
+        where a.line_id in (select line_id from t_via where station_id =#{startStationId} and type = '1' group by line_id) and a."type" = '1'
+    </select>
+
+</mapper>

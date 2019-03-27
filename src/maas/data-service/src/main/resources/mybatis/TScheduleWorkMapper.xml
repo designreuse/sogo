@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TScheduleWorkDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TScheduleWorkDto">
+        <id column="id" property="id" />
+        <result column="driver_id" property="driverId" />
+        <result column="status" property="status" />
+        <result column="create_date" property="createDate" />
+        <result column="create_id" property="createId" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_id" property="updateId" />
+        <result column="username" property="userName" />
+        <result column="start_date" property="startDate" />
+        <result column="end_date" property="endDate" />
+        <result column="schedule_name" property="scheduleName" />
+
+    </resultMap>
+
+    <select id="getList" resultMap="BaseResultMap">
+        select tsw.*,tsu.username from t_schedule_work tsw left join t_sys_user tsu on ( tsw.create_id = tsu.id)
+    </select>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, driver_id, status, create_date, create_id, update_date, update_id
+    </sql>
+
+</mapper>

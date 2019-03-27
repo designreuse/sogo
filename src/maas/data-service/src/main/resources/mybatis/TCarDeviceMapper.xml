@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TCarDeviceDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TCarDeviceDto">
+        <id column="id" property="id" />
+        <result column="car_id" property="carId" />
+        <result column="device_status" property="deviceStatus" />
+        <result column="device_code" property="deviceCode" />
+        <result column="device_name" property="deviceName" />
+        <result column="create_date" property="createDate" />
+        <result column="create_id" property="createId" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_id" property="updateId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, car_id, device_status, device_code, device_name, create_date, create_id, update_date, update_id
+    </sql>
+
+</mapper>

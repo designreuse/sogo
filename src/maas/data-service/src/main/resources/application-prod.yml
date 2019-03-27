@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: data-service
+  session:
+    store-type: none
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://183.62.69.35:18007/postgres?useSSL=false
+#    url: jdbc:postgresql://10.10.180.35:5431/postgres?useSSL=false
+    #url: jdbc:postgresql://10.10.180.26:5432/maas?useSSL=false
+    username: postgres
+    password: _Admin001
+    #password: postgres
+    driver-class-name: org.postgresql.Driver
+    # 配置数据源
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 5
+      auto-commit: true
+      idle-timeout: 10000
+      pool-name: HikariDS
+      max-lifetime: 1800000
+      connection-timeout: 30000
+      connection-test-query: select 1
+      maximum-pool-size: 30
+  redis:
+    hostName: 183.62.69.35
+#    hostName: maas2
+#    port: 6379
+    port: 18008
+    database: 2
+    password: Admin001
+  kafka:
+    consumer:
+      group-id: kafka
+      heartbeat-interval: 300000
+    bootstrap-servers: 127.0.0.1:9092
+  jackson:
+    time-zone: Asia/Shanghai
+#    bootstrap-servers: 10.13.131.176:9094
+

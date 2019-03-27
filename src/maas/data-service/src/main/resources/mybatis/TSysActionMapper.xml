@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TSysActionDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TSysActionDto">
+        <result column="fid" property="fid" />
+        <result column="fname" property="fname" />
+        <result column="fnumber" property="fnumber" />
+        <result column="description" property="description" />
+        <result column="module_id" property="moduleId" />
+        <result column="orderno" property="orderno" />
+        <result column="isdelete" property="isdelete" />
+        <result column="time_create" property="timeCreate" />
+        <result column="creator" property="creator" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        fid, fname, fnumber, description, module_id, orderno, isdelete, time_create, creator
+    </sql>
+
+</mapper>

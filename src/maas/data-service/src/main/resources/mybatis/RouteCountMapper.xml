@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.RouteCountDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.RouteCountDto">
+        <id column="id" property="id"/>
+        <result column="driver_user_id" property="driverUserId"/>
+        <result column="total_station" property="totalStation"/>
+        <result column="on_num" property="onNum"/>
+        <result column="off_num" property="offNum"/>
+        <result column="pre_station_mile" property="preStationMile"/>
+        <result column="name" property="name"/>
+        <result column="type" property="type"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="start_name" property="startName"/>
+        <result column="end_name" property="endName"/>
+
+    </resultMap>
+
+    <select id="getListCount" resultType="hashMap">
+        select *, (select rs.create_date as start_date
+                   from t_route_station rs
+                   where rs.route_id = total.id
+                   order by rs.create_date
+                   limit 1
+                   offset 0),
+                  (select rs.create_date as end_date
+                   from t_route_station rs
+                   where rs.route_id = total.id
+                   order by rs.create_date desc
+                   limit 1
+                   offset 0),
+                  (select station.site_name as start_name
+                   from (select station_id as start_id
+                         from t_route_station rs
+                         where rs.route_id = total.id
+                         order by rs.create_date
+                         limit 1
+                         offset 0) start_sta
+                            left join t_station station on (station.id = start_sta.start_id)),
+                  (select station.site_name as end_name
+                   from (select station_id as end_id
+                         from t_route_station rs
+                         where rs.route_id = total.id
+                         order by rs.create_date desc
+                         limit 1
+                         offset 0) end_sta
+                            left join t_station station on (station.id = end_sta.end_id))
+        from (select peak.id,
+                     driver_user_id,
+                     count(sation.*)as       total_station,
+                     sum(on_num) as          on_num,
+                     sum(off_num) as         off_num,
+                     sum(pre_station_mile)as pre_station_mile,
+                     driver.name,driver.no,
+                     '高峰'as                  type,
+                      start_date,end_date
+              from t_route_peak peak
+                       left join t_driver driver on (driver.id = peak.driver_user_id)
+                       left join t_route_station sation on (peak.id = route_id)
+              where peak.create_date<![CDATA[ < ]]>current_date
+              group by peak.id, driver.name,driver.no
+              union all
+              select offpeak.id,
+                     driver_user_id,
+                     count(sation.*)as       total_station,
+                     sum(on_num) as          on_num,
+                     sum(off_num) as         off_num,
+                     sum(pre_station_mile)as pre_station_mile,
+                     driver.name,driver.no,
+                     '平峰' as                 type,
+                     start_date,end_date
+              from t_route_offpeak offpeak
+                       left join t_route_station sation on (offpeak.id = route_id)
+                       left join t_driver driver on (driver.id = driver_user_id)
+              where offpeak.create_date<![CDATA[ < ]]>current_date
+              group by offpeak.id, driver.name ,driver.no) total
+          where  1=1
+        <if test="name !=null and name!=''">
+            and name like concat(concat(#{name}),'%')
+        </if>
+        <if test="type =='0'.toString()">
+            and type = '高峰'
+        </if>
+        <if test="type =='1'.toString()">
+            and type = '平峰'
+        </if>
+        <if test="dateType == '0'.toString()">
+            and  total.start_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <if test="dateType == '1'.toString()">
+            and  total.end_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        order by  total.start_date desc
+    </select>
+
+    <select id="getRouteStation" resultType="map">
+        select station.*, s.site_name, mm.type, driver_user_id, driver.name,driver.no
+        from t_route_station station
+                 left join (select id, driver_user_id, '平峰' as type from t_route_offpeak
+                            union all
+                            select id, driver_user_id, '高峰' as type from t_route_peak) mm on (mm.id = route_id)
+                 left join t_driver driver on (driver.id = driver_user_id)
+                 left join t_station s on (station.station_id = s.id)
+        where station.create_date<![CDATA[ < ]]>current_date
+        <if test="name !=null and name!=''">
+            and name like concat(concat(#{name}),'%')
+        </if>
+        <if test="type =='0'.toString()">
+            and mm.type = '高峰'
+        </if>
+        <if test="type =='1'.toString()">
+            and mm.type = '平峰'
+        </if>
+
+        <if test="aStartTime !=null and aEndTime!=null">
+            and station.create_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        order by  station.create_date desc
+
+    </select>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, line_id, driver_user_id, line_start_id, line_end_id, off_num, on_num, via_num, total_mile, start_date, end_date, create_date, create_id, update_date, update_id
+    </sql>
+
+</mapper>

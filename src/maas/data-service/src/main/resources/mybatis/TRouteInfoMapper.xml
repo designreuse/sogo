@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TRouteInfoDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TRouteInfoDto">
+        <id column="id" property="id" />
+        <result column="route_id" property="routeId" />
+        <result column="route_type" property="routeType" />
+        <result column="route_car_id" property="routeCarId" />
+        <result column="route_line_id" property="routeLineId" />
+        <result column="route_driver_id" property="routeDriverId" />
+        <result column="route_isend" property="routeIsend" />
+        <result column="create_date" property="createDate" />
+        <result column="update_date" property="updateDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, route_id,route_type, route_car_id, route_line_id, route_driver_id, route_isend, create_date,update_date
+    </sql>
+
+</mapper>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TDriverDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TDriverDto">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="no" property="no"/>
+        <result column="telephone" property="telephone"/>
+        <result column="password" property="password"/>
+        <result column="status" property="status"/>
+        <result column="schedule_id" property="scheduleId"/>
+        <result column="area_id" property="areaId"/>
+        <result column="area_path" property="areaPath"/>
+        <result column="detail_addr" property="detailAddr"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_id" property="createId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_id" property="updateId"/>
+        <result column="username" property="userName"/>
+        <result column="schedule_id" property="scheduleId"/>
+        <result column="schedule_name" property="scheduleName"/>
+        <result column="line_name" property="lineName"/>
+
+    </resultMap>
+
+    <select id="getDriverList" resultMap="BaseResultMap">
+        select tldb.line_id,line.line_name,tdwh.schedule_id,driver.*,tsw.schedule_name, tsu.username
+        from t_driver driver
+                 left join t_sys_user tsu on (tsu.id = driver.create_id)
+                 left join t_driver_work_hour tdwh on (tdwh.driver_id = driver.id)
+                 left join t_schedule_work tsw on (tsw.id =tdwh.schedule_id)
+                left join t_line_driver_bind tldb on (tldb.driver_id = driver.id)
+                left join t_line line on (line.id =tldb.line_id)
+       where  1=1
+            <if test="no !=null and no!=''">
+                and driver.no = #{no}
+            </if>
+        <if test="name !=null and name!=''">
+            and driver.name like concat(concat(#{name}),'%')
+        </if>
+        <if test="status !=null and status!=''">
+            and driver.status = #{status}
+        </if>
+        <if test="isEnabled !=null and isEnabled!=''">
+            and tdwh.status = #{isEnabled}
+        </if>
+        <if test="scheduleId !=null and scheduleId!=''">
+            and tdwh.schedule_id = #{scheduleId}
+        </if>
+        <if test="scheduleName !=null and scheduleName!=''">
+            and tsw.schedule_name like concat(concat(#{scheduleName}),'%')
+        </if>
+
+        <if test="dateType == '0'.toString()">
+            and driver.create_date between #{aStartTime} and  #{aEndTime}
+        </if>
+
+        <if test="dateType == '1'.toString()">
+            and driver.update_date between #{aStartTime} and  #{aEndTime}
+        </if>
+
+        <if test="areaPath !=null and areaPath!=''">
+            and driver.area_path like concat(concat(#{areaPath}),'%')
+        </if>
+
+        group by tdwh.schedule_id, driver.id, driver.create_id, driver.create_date, driver.name, driver.update_date,
+                 driver.area_id, driver.area_path, driver.detail_addr, driver.no, driver.password, driver.status,
+                 driver.telephone, driver.update_id, tsu.username,tsw.schedule_name,tldb.line_id,line.line_name
+        order by  driver.create_date desc
+    </select>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, name, no, telephone, password, status, schedule_id, area_id, area_path, detail_addr, create_date, create_id, update_date, update_id
+    </sql>
+
+
+    <update id="updateDriverCatStatus" parameterType="java.util.HashMap">
+        update t_driver_car_bind set bind_status = '2'
+        where driver_id = #{driverId} and bind_status = '1'
+    </update>
+
+</mapper>

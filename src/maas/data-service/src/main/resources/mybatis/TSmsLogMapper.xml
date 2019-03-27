@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TSmsLogDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TSmsLogDto">
+        <id column="id" property="id" />
+        <result column="sms_mobile" property="smsMobile" />
+        <result column="sms_code" property="smsCode" />
+        <result column="sms_content" property="smsContent" />
+        <result column="sms_type" property="smsType" />
+        <result column="sms_ip" property="smsIp" />
+        <result column="sms_user_id" property="smsUserId" />
+        <result column="create_date" property="createDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, sms_mobile, sms_code, sms_content, sms_type, sms_ip, sms_user_id, create_date
+    </sql>
+
+</mapper>

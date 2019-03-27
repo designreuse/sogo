@@ -1,0 +1,24 @@
+spring:
+  profiles:
+    active: prod
+  application:
+    name: data-service
+  session:
+    store-type: none
+
+
+#mybatis plus 配置
+mybatis-plus:
+  mapper-locations: classpath:mybatis/*.xml
+  configuration:
+    call-setters-on-nulls: true
+logging:
+  level:
+    com.yihexinda.dataservice.dao: debug
+
+wx:
+  pay:
+    appId: wx1a5b0ee65f79eded
+    mchId: 1519768271
+    key: b25af07c17f74dd38fec10ad2eedd0a3
+    keyPath: classpath:apiclient_cert.p12

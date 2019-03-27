@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TRouteOffpeakStationDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TRouteOffpeakStationDto">
+        <id column="id" property="id" />
+        <result column="route_id" property="routeId" />
+        <result column="station_id" property="stationId" />
+        <result column="off_num" property="offNum" />
+        <result column="on_num" property="onNum" />
+        <result column="create_date" property="createDate" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, route_id, station_id, off_num, on_num, create_date
+    </sql>
+
+</mapper>

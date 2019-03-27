@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TLineDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TLineDto">
+        <id column="id" property="id"/>
+        <result column="line_name" property="lineName"/>
+        <result column="line_state" property="lineState"/>
+        <result column="price" property="price"/>
+        <result column="timelip" property="timelip"/>
+        <result column="line_start_id" property="lineStartId"/>
+        <result column="line_end_id" property="lineEndId"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_id" property="createId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_id" property="updateId"/>
+        <result column="total_station" property="totalStation"/>
+        <result column="index" property="index"/>
+        <result column="longitude" property="longitude"/>
+        <result column="latitude" property="latitude"/>
+        <result column="area_path" property="areaPath"/>
+        <result column="area_id" property="areaId"/>
+        <result column="station_id" property="stationId"/>
+    </resultMap>
+
+    <select id="lineVia" resultMap="BaseResultMap">
+        select via.station_id, via.index, station.longitude, station.latitude, line.*
+        from t_line line
+                 left join t_via via on (via.line_id = line.id)
+                 left join t_station station on (station.id = via.station_id)
+        where line.id = #{lineId}
+        order by via.index
+    </select>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, line_name, line_state, price, timelip, line_start_id, line_end_id, create_date, create_id, update_date, update_id, total_station
+    </sql>
+
+</mapper>

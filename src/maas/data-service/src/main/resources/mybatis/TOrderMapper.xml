@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TOrderDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TOrderDto">
+        <id column="id" property="id"/>
+        <result column="trade_no" property="tradeNo"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="car_id" property="carId"/>
+        <result column="driver_id" property="driverId"/>
+        <result column="route_id" property="routeId"/>
+        <result column="prepare_time_idx" property="prepareTimeIdx"/>
+        <result column="passengers_num" property="passengersNum"/>
+        <result column="trip_time" property="tripTime"/>
+        <result column="start_station_id" property="startStationId"/>
+        <result column="end_station_id" property="endStationId"/>
+        <result column="user_id" property="userId"/>
+        <result column="area_id" property="areaId"/>
+        <result column="area_path" property="areaPath"/>
+        <result column="site_dis" property="siteDis"/>
+        <result column="order_amount" property="orderAmount"/>
+        <result column="order_type" property="orderType"/>
+        <result column="ticket_type" property="ticketType"/>
+        <result column="order_status" property="orderStatus"/>
+        <result column="is_refund" property="isRefund"/>
+        <result column="is_pay" property="isPay"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_id" property="createId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_id" property="updateId"/>
+        <result column="ride_start_date" property="rideStartDate"/>
+        <result column="ride_end_date" property="rideEndDate"/>
+        <result column="route_type" property="routeType"/>
+        <result column="is_cancel" property="isCancel"/>
+        <result column="line_id" property="lineId"/>
+        <result column="exp_date" property="expDate"/>
+        <result column="order_position" property="orderPosition"/>
+        <result column="pay_date" property="payDate"/>
+        <result column="allot_date" property="allotDate"/>
+    </resultMap>
+
+    <select id="getOrderList" resultType="java.util.Map">
+        select o.*,
+               tor.refund_no,
+               tor.refund_status,
+               tor.remark,
+               tor.create_date as fefund_date,
+               tor.refund_amount,
+               case
+                   when peak.id is null
+                         then '平峰'
+                   else '高峰'
+                       end     as trip_type,
+               u.nick,
+               t1.site_name    as start_station,
+               t2.site_name    as end_station,
+               car.type        as car_type,
+               car_no,
+               driver.name   as  driver_name
+        from t_order o
+                 left join t_station t1 on (start_station_id = t1.id)
+                 left join t_station t2 on (end_station_id = t2.id)
+                 left join t_car car on (car_id = car.id)
+                 left join t_user u on (user_id = u.id)
+                 left join t_route_peak peak on (peak.id = route_id)
+                 left join t_order_refunds tor on (tor.order_id = o.id)
+                 LEFT JOIN t_driver driver on (driver.id=o.driver_id)
+        where  1=1
+        <if test="ticketType !=null and ticketType != ''">
+            and  o.ticket_type = #{ticketType}
+        </if>
+        <if test="orderNo !=null and orderNo != ''">
+            and  o.order_no like concat(concat(#{orderNo}),'%')
+        </if>
+        <if test="nick !=null and nick != ''">
+            and  u.nick like concat(concat(#{nick}),'%')
+        </if>
+        <if test="phone !=null and phone != ''">
+            and  u.phone = #{phone}
+        </if>
+        <if test="orderType !=null and orderType != ''">
+            and  o.order_type = #{orderType}
+        </if>
+        <if test="orderStatus !=null and orderStatus != ''">
+            and  o.order_status = #{orderStatus}
+        </if>
+        <if test="orderStatus !=null and orderStatus != ''">
+            and  o.order_status = #{orderStatus}
+        </if>
+        <if test="dateType == '0'.toString()">
+            and  o.ride_start_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <if test="dateType == '1'.toString()">
+            and  o.ride_end_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <!-- 支付成功且未退款 -->
+        <if test="payType =='0'.toString()">
+            and  o.is_pay = '1' and o.is_refund = '0'
+        </if>
+        <if test="payType =='1'.toString()">
+            and  tor.refund_status ='0'
+        </if>
+        <if test="payType =='2'.toString()">
+            and  tor.refund_status ='1'
+        </if>
+        <if test="payType =='3'.toString()">
+            and  o.is_pay = '0'
+        </if>
+        order by  o.create_date desc
+    </select>
+
+    <!-- 查询订单详情-->
+    <select id="getOrder" resultType="Map">
+        select o.*,
+               tor.refund_no,
+               tor.refund_status,
+               tor.remark,
+               tor.create_date                                         as fefund_date,
+               case
+                   when peak.id is null
+                         then '平峰'
+                   else '高峰'
+                       end                                             as trip_type,
+               (EXTRACT(HOUR from (ride_end_date - ride_start_date)) * 60 +
+                EXTRACT(MINUTE from (ride_end_date - ride_start_date)))AS minute,
+               t1.site_name                                            as start_station,
+               t2.site_name                                            as end_station,
+               car.type                                                as car_type,
+               car_no,driver.name as driver_name,t1.longitude,t1.latitude
+        from t_order o
+                 left join t_station t1 on (start_station_id = t1.id)
+                 left join t_station t2 on (end_station_id = t2.id)
+                 left join t_car car on (car_id = car.id)
+                 left join t_route_peak peak on (peak.id = route_id)
+                 left join  t_driver driver  on (driver.id = car.device_id)
+                 left join t_order_refunds tor on (tor.order_id = o.id)
+        where o.id = #{id}
+    </select>
+
+    <!-- 查询用户订单列表-->
+    <select id="getOrderUser" resultType="HashMap">
+        select o.*,
+               tps.create_date as pay_date,
+               tps.pay_amount,
+               tor.refund_no,
+               tor.refund_amount,
+               tor.refund_status,
+               tor.remark,
+               tor.create_date as fefund_date,
+               t1.site_name    as start_station,
+               t2.site_name    as end_station,
+               car.type        as car_type,
+               car_no,
+               tu.nick
+        from t_order o
+                 left join t_station t1 on (start_station_id = t1.id)
+                 left join t_station t2 on (end_station_id = t2.id)
+                 left join t_car car on (car_id = car.id)
+                 left join t_order_refunds tor on (tor.order_id = o.id)
+                 left join t_pay_serial tps on (tps.order_id =o.id)
+                 left join t_user tu on (tu.id=o.user_id)
+        where o.user_id = #{userId}
+        <if test="ticketType !=null and ticketType != ''">
+            and  o.ticket_type = #{ticketType}
+        </if>
+        <if test="orderNo !=null and orderNo != ''">
+            and  o.order_no like concat(concat(#{orderNo}),'%')
+        </if>
+        <if test="isPay !=null and isPay != ''">
+            and  o.is_pay = #{isPay}
+        </if>
+        <if test="nick !=null and nick != ''">
+            and  tu.nick like concat(concat(#{nick}),'%')
+        </if>
+        <if test="phone !=null and phone != ''">
+            and  tu.phone = #{phone}
+        </if>
+        <if test="orderType !=null and orderType != ''">
+            and  o.order_type = #{orderType}
+        </if>
+        <if test="orderStatus !=null and orderStatus != ''">
+            and  o.order_status = #{orderStatus}
+        </if>
+        <if test="dateType == '0'.toString()">
+            and  tps.create_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <if test="dateType == '1'.toString()">
+            and  o.ride_start_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <if test="dateType == '2'.toString()">
+            and  o.ride_end_date between #{aStartTime} and  #{aEndTime}
+        </if>
+        <!-- 支付成功且未退款 -->
+        <if test="payType =='0'.toString()">
+            and  o.is_pay = '1' and o.is_refund = '0'
+        </if>
+        <if test="payType =='1'.toString()">
+            and  tor.refund_status ='0'
+        </if>
+        <if test="payType =='2'.toString()">
+            and  tor.refund_status ='1'
+        </if>
+        <if test="payType =='3'.toString()">
+            and  o.is_pay = '0'
+        </if>
+        ORDER BY o.create_date DESC
+
+    </select>
+
+    <select id="getLatelyOrder" resultMap="BaseResultMap">
+
+        select extract(epoch FROM((trip_time+'3 min')-now())) as data,
+               case
+                   when peak.id is null
+                         then  1
+                   else 2
+                       end  as trip_type,
+               o.* from t_order o
+                            left join t_route_peak peak on (peak.id=o.route_id)
+        where user_id = #{userId} and  trip_time >current_date order by extract(epoch FROM((trip_time+'3 min')-now())) limit 1;
+
+    </select>
+
+    <select id="getDriverRouteList" resultType="HashMap">
+    select o.*,
+
+               t1.site_name    as start_station,
+               t2.site_name    as end_station,
+               car.type        as car_type,
+               car_no
+        from t_order o
+                 left join t_station t1 on (start_station_id = t1.id)
+                 left join t_station t2 on (end_station_id = t2.id)
+                 left join t_car car on (car_id = car.id)
+                 left join t_driver driver  on (driver.id = o.id)
+        where driver_id = #{DriverId}
+    </select>
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, trade_no, order_no, car_id,driver_id, route_id, prepare_time_idx, passengers_num, trip_time, start_station_id, end_station_id, user_id, area_id, area_path, site_dis, order_amount, order_type, ticket_type, order_status, is_refund, is_pay, create_date, create_id, update_date, update_id,is_cancel,line_id,exp_date,order_position,pay_date,allot_date
+    </sql>
+
+    <update id="batchUpdateByCondition" parameterType="java.util.HashMap">
+        UPDATE t_order
+        <set>
+            <if test="order_status != null">
+                order_status = #{order_status},
+            </if>
+            <if test="is_cancel != null">
+                is_cancel = #{is_cancel},
+            </if>
+            <if test="is_refund != null">
+                is_refund = #{is_refund},
+            </if>
+            <if test="update_date != null">
+                update_date = #{update_date},
+            </if>
+        </set>
+        <where>
+            <if test="ids != null">and id in
+                <foreach collection="ids" item="item" index="index"
+                         open="(" separator="," close=")">#{item}</foreach>
+            </if>
+        </where>
+    </update>
+</mapper>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.MyRouteDao">
+	
+	<select id="getMyRouteOffpeakList" resultType="com.yihexinda.data.dto.MyRouteDto">
+		select
+		a.id,
+		a.driver_user_id as driverId,
+		a.car_id as carId,
+		c.license,
+		a.route_state as routeState,
+		a.create_date as createDate,
+		a.update_date as endTime,
+		array_to_string(ARRAY(SELECT b.site_name from t_station b where b.id = ANY(regexp_split_to_array(a.midway_station,','))),',') as siteName,
+		(CASE a.route_state WHEN '1' THEN(select sum(on_num) from t_route_station where route_id = a.id and route_type = '0') end) as peopleNum,
+		(CASE a.route_state WHEN '1' THEN (select sum(pre_station_mile) from t_route_station where route_id = a.id and route_type = '0') end) as totalMile
+		from t_route_offpeak a join t_car c
+		on a.car_id = c.id
+		where a.driver_user_id = #{driverId} and a.create_date >= #{startTime} and route_state = '1'
+	</select>
+	
+	<select id="getMyRoutePeakList" resultType="com.yihexinda.data.dto.MyRouteDto">
+		select
+		a.route_driver_id,
+		a.id,
+		a.route_line_id,
+		a.create_date as createDate,
+		a.update_date as endTime,
+		(SELECT array_to_string(array_agg(c.site_name),',') from t_via d join t_station c on d.station_id = c.id where d.line_id = a.route_line_id) as siteName,
+		(CASE a.route_isend WHEN '1' THEN(select sum(on_num) from t_route_station where route_id = b.id and route_type = '1') end) as peopleNum,
+		(CASE a.route_isend WHEN '1' THEN (select sum(pre_station_mile) from t_route_station where route_id = b.id and route_type = '1') end) as totalMile,
+		f.license
+		from t_route_info a join t_route_peak b
+		on a.route_line_id =  b.line_id
+		join t_car f
+		on a.route_car_id = f.id
+		where a.route_driver_id =#{driverId} and a.create_date >= #{startTime} and a.route_isend = '1'
+	</select>
+
+	<select id="getMyRouteOffpeakDetails" parameterType="String" resultType="com.yihexinda.data.dto.MyRouteDto">
+		select
+		a.create_date as createDate,
+		a.update_date as endTime,
+		(select license from t_car where id = a.car_id) as license,
+		sum(d.on_num) as peopleNum,
+		sum(d.pre_station_mile) as totalMile
+		from t_route_offpeak a join t_route_station d
+		on a.id = d.route_id
+		where a.id = #{routeId}
+		group by a.id
+	</select>
+
+	<select id="getRouteDetails" resultType="com.yihexinda.data.dto.MyRouteDto">
+		select
+		a.route_id,
+		a.off_num as offNum,
+		a.on_num as onNum,
+		a.create_date as createDate,
+		b.site_name as siteName
+		from t_route_station a join t_station b
+		on a.station_id = b.id
+		where a.route_id = #{routeId}
+		<if test="type == '1'">
+			and a.route_type = '0'
+		</if>
+		<if test="type == '2'">
+			and a.route_type = '1'
+		</if>
+	</select>
+
+	<select id="getMyRoutePeakDetails" parameterType="String" resultType="com.yihexinda.data.dto.MyRouteDto">
+		select
+		a.create_date as createDate,
+		a.update_date as endTime,
+		a.route_isend,
+		(select c.license from t_driver_car_bind b join t_car c on b.car_id = c.id
+		where b.driver_id = a.route_driver_id and b.bind_status = '1') as license,
+		sum(e.on_num) as peopleNum,
+		sum(e.pre_station_mile) as totalMile
+		from t_route_info a join t_route_peak d
+		on a.route_line_id = d.line_id
+		join t_route_station e
+		on d.id = e.route_id
+		where a.id =#{routeId}
+		group by a.id
+	</select>
+
+	<select id="getRouteInfo" resultType="hashMap">
+
+		select  * from t_route_info where route_driver_id =#{driver_id} and  route_isend = '1'
+
+	</select>
+
+
+</mapper>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TCarPositionDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TCarPositionDto">
+        <id column="id" property="id" />
+        <result column="car_id" property="carId" />
+        <result column="last_longitude" property="lastLongitude" />
+        <result column="last_latitude" property="lastLatitude" />
+        <result column="longitude" property="longitude" />
+        <result column="latitude" property="latitude" />
+        <result column="create_date" property="createDate" />
+        <result column="create_id" property="createId" />
+        <result column="update_date" property="updateDate" />
+        <result column="update_id" property="updateId" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, car_id, last_longitude, last_latitude, longitude, latitude, create_date, create_id, update_date, update_id
+    </sql>
+
+    <select id="selectCurCarPostion" parameterType="java.util.HashMap" resultType="java.util.HashMap" >
+        select *
+        from (select car_id id, last_longitude lastlongitude,last_latitude lastlatitude,
+        longitude lng,latitude lati, row_number() over(partition by car_id ORDER BY create_date desc) as row from t_car_position ) t
+        <where>
+            <![CDATA[ row <= 1 ]]>
+            <if test=" car_id != null and car_id !='' ">
+                AND t.id = #{car_id}
+            </if>
+            <if test="carIds != null">
+                and t.id in
+                <foreach collection="carIds" item="item" index="index"
+                         open="(" separator="," close=")">#{item}</foreach>
+            </if>
+        </where>
+    </select>
+
+</mapper>

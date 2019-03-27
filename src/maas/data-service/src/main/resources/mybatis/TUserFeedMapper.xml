@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yihexinda.dataservice.dao.TUserFeedDao">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.yihexinda.data.dto.TUserFeedDto">
+        <id column="id" property="id"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_type" property="userType"/>
+        <result column="feed_content" property="feedContent"/>
+        <result column="mobile" property="mobile"/>
+        <result column="create_date" property="createDate"/>
+        <result column="create_id" property="createId"/>
+        <result column="update_date" property="updateDate"/>
+        <result column="update_id" property="updateId"/>
+        <result column="user_name" property="userName"/>
+    </resultMap>
+
+    <select id="getUserFeedList" resultMap="BaseResultMap" parameterType="java.util.HashMap">
+        select userList.user_name,userList.phone as mobile,tuf.*
+        from t_user_feed tuf
+                 left join (select id, nick as user_name,phone from t_user
+                            union all
+                            select id, name as user_name,telephone as phone from t_driver) userList on (userList.id = tuf.user_id)
+        <where>
+            <if test="beginDate != null ">
+               and tuf.create_date <![CDATA[ >= ]]> to_date(#{beginDate},'YYYY-MM-DD')
+            </if>
+            <if test="endDate != null ">
+                and tuf.create_date <![CDATA[ <= ]]> to_date(#{endDate},'YYYY-MM-DD')
+            </if>
+            <if test="aStartTime != null and aEndTime != null">
+                and tuf.create_date between #{aStartTime} and  #{aEndTime}
+            </if>
+        </where>
+        order by  tuf.create_date desc
+    </select>
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, user_id, user_type, feed_content, mobile, create_date, create_id, update_date, update_id
+    </sql>
+
+</mapper>
