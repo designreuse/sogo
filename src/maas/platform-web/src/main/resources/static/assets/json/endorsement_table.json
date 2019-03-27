@@ -1,0 +1,19 @@
+{
+  "msg": "string",
+  "obj": {
+    "otherData": {},
+    "page": 0,
+    "pageSize": 0,
+    "rows": [
+      {
+
+        "a": "2018-10-24T02:00:29.794Z",
+        "b": "G05180 XX",
+        "c": "已经签注了"
+
+      }
+    ],
+    "total": 1
+  },
+  "success": true
+}

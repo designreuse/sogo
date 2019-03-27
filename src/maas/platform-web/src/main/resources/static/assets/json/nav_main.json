@@ -1,0 +1,76 @@
+{
+  "data": [
+    {
+      "text": "首页",
+      "icon": "&#xe68e;",
+      "subset":[
+        {
+          "text": "平台首页",
+          "icon": "&#xe61c;",
+          "href": "demo/welcome.html"
+        }
+      ]
+
+    },
+    {
+      "text": "调度单管理",
+      "icon": "&#xe68e;",
+      "subset":[
+        {
+          "text": "待抢单",
+          "icon": "&#xe630;",
+          "href": "trade/pending-order-master.html"
+        },
+        {
+          "text": "待派单",
+          "icon": "&#xe630;",
+          "href": "trade/pending-bill-master.html"
+        },
+        {
+          "text": "已抢单",
+          "icon": "&#xe630;",
+          "href": "trade/already-robbed-master.html"
+        },{
+          "text":"已派单",
+          "icon": "&#xe630;",
+          "href": "trade/already-dispatched-master.html"
+        },{
+          "text":"兜底单",
+          "icon": "&#xe630;",
+          "href": "trade/pocket-bill-master.html"
+        }
+      ]
+
+    },
+    {
+      "text": "规则管理",
+      "icon": "&#xe68e;",
+      "subset":[
+        {
+          "text": "抢单派单规则",
+          "icon": "&#xe61c;",
+          "href": "trade/rule-robbing-master.html"
+        },
+
+        {
+          "text": "绩效规则",
+          "icon": "&#xe61c;",
+          "href":"trade/performance-rule-master.html"
+        }
+      ]
+
+    },
+    {
+      "text": "系统管理",
+      "icon": "&#xe68e;",
+      "subset":[
+        {
+          "text": "用户管理",
+          "icon": "&#xe61c;",
+          "href": "trade/user-list.html"
+        }
+      ]
+
+    }
+  ]
+}

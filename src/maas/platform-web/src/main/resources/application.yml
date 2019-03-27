@@ -1,0 +1,68 @@
+spring:
+  application:
+    name: platform-web
+  freemarker:
+    template-loader-path: classpath:/templates
+    cache: false
+    suffix: .ftl
+  redis:
+    host: 127.0.0.1
+    port: 6379
+    password: shenzhenair
+    database: 2
+  kafka:
+    consumer:
+      group-id: kafka
+    bootstrap-servers: localhost:9092
+  jackson:
+    time-zone: Asia/Shanghai
+server:
+  port: 8083
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 60000
+        loggerLevel: basic
+platform-web:
+  base-path: /platform-web
+  check-login-and-redir-url: /asms/login/asms/checkLogin
+  session-name: scheduling-session
+  asms-host: http://10.12.69.67:8080
+  get-login-username-url: /asms/login/asms/token2bh
+  logstash-host: 192.168.79.130:4560
+---
+spring:
+  profiles: docker
+  application:
+    name: platform-web
+  freemarker:
+    template-loader-path: classpath:/templates
+    cache: false
+    suffix: .ftl
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    database: 2
+  kafka:
+    consumer:
+      group-id: kafka-docker
+    bootstrap-servers: localhost:9092
+  jackson:
+    time-zone: Asia/Shanghai
+server:
+  port: 8083
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 60000
+        loggerLevel: basic
+platform-web:
+  base-path: /platform-web
+  check-login-and-redir-url: /asms/login/asms/checkLogin
+  session-name: scheduling-session
+  asms-host: ${ASMS_HOST}
+  get-login-username-url: /asms/login/asms/token2bh
