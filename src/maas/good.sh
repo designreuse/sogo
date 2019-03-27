@@ -1,0 +1,10 @@
+./startup.sh config-service
+sleep 10
+./startup.sh discovery-service
+sleep 20
+./startup.sh data-service 
+sleep 10
+./startup.sh user-web/           
+sleep 10
+./startup.sh buss-web/           
+sleep 10

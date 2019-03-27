@@ -1,0 +1,81 @@
+stages:
+- build
+- package
+#- deploy
+
+maven-build:
+  stage: build
+  script:
+  - "mvn clean -s maven-settings.xml install -U --non-recursive"
+  - "mvn clean -s maven-settings.xml install -U -Dmaven.test.skip=true"
+  - "mvn package -U -B -Dmaven.test.skip=true"
+  only:
+  - release
+  tags:
+  - shell
+  cache:
+    paths:
+    - auth-service/target/*.war
+    - config-service/target/*.jar
+    - data-service/target/*.war
+    - discovery-service/target/*.jar
+    - gateway-service/target/*.jar
+    - node-web/target/*.jar
+    - platform-web/target/*.jar
+    - test-sso-web/target/*.jar
+
+docker-build:
+  stage: package
+  script:
+#  - cd discovery-service
+#  - docker build -t shenhang/discovery-service:latest .
+#  - docker tag "shenhang/discovery-service:latest" "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-discovery-service:latest"
+#  - docker push "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-discovery-service:latest"
+#  - cd ../config-service
+#  - docker build -t shenhang/config-service:latest .
+#  - docker tag "shenhang/config-service:latest" "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-config-service:latest"
+#  - docker push "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-config-service:latest"
+  - cd auth-service
+  - docker build -t shenhang/auth-service:latest .
+  - docker tag "shenhang/auth-service:latest" "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-auth-service:latest"
+  - docker push "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-auth-service:latest"
+  - cd ../data-service
+  - docker build -t shenhang/data-service:latest .
+  - docker tag "shenhang/data-service:latest" "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-data-service:latest"
+  - docker push "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-data-service:latest"
+  - cd ../platform-web
+  - docker build -t shenhang/platform-web:latest .
+  - docker tag "shenhang/platform-web:latest" "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-platform-web:latest"
+  - docker push "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-platform-web:latest"
+  - cd ../node-web
+  - docker build -t shenhang/node-web:latest .
+  - docker tag "shenhang/node-web:latest" "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-node-web:latest"
+  - docker push "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-node-web:latest"
+#  - cd ../test-sso-web
+#  - docker build -t shenhang/test-sso-web:latest .
+#  - docker tag "shenhang/test-sso-web:latest" "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-test-sso-web:latest"
+#  - docker push "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-test-sso-web:latest"
+#  - cd ../gateway-service
+#  - docker build -t shenhang/gateway-service:latest .
+#  - docker tag "shenhang/gateway-service:latest" "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-gateway-service:latest"
+#  - docker push "registry.cn-hangzhou.aliyuncs.com/cicadabear/shenhang-gateway-service:latest"
+  - docker-compose down
+#  - docker-compose up -d
+  - error
+  dependencies:
+  - maven-build
+  only:
+  - release
+  cache:
+    paths:
+    - auth-service/target/*.war
+    - config-service/target/*.jar
+    - data-service/target/*.war
+    - discovery-service/target/*.jar
+    - gateway-service/target/*.jar
+    - node-web/target/*.jar
+    - platform-web/target/*.jar
+    - test-sso-web/target/*.jar
+    policy: pull
+  tags:
+  - shell
