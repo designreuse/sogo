@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yihexinda.authservice.dao.SysUserMapper">
+
+    <resultMap id="FindSysUserReturn" type="com.yihexinda.auth.dto.SysUserDto">
+        <id column="USER_ID" property="userId" jdbcType="DECIMAL"/>
+        <result column="COMP_NUM" property="compId" jdbcType="VARCHAR"/>
+        <result column="COMP_NAME" property="compName" jdbcType="VARCHAR"/>
+        <result column="COMP_CITY" property="compCity" jdbcType="VARCHAR"/>
+        <result column="DEPT_NUM" property="deptId" jdbcType="VARCHAR"/>
+        <result column="DEPT_NAME" property="deptName" jdbcType="VARCHAR"/>
+        <result column="DEPT_CITY" property="deptCity" jdbcType="VARCHAR"/>
+        <result column="USERNAME" property="username" jdbcType="VARCHAR"/>
+        <result column="PASSWORD" property="password" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="SEX" property="sex" jdbcType="VARCHAR"/>
+        <result column="AVATAR" property="avatar" jdbcType="VARCHAR"/>
+        <result column="TEL" property="tel" jdbcType="VARCHAR"/>
+        <result column="MOBILE" property="mobile" jdbcType="VARCHAR"/>
+        <result column="EMAIL" property="email" jdbcType="VARCHAR"/>
+        <result column="QQ" property="qq" jdbcType="VARCHAR"/>
+        <result column="WECHART" property="wechart" jdbcType="VARCHAR"/>
+        <result column="ADDR" property="addr" jdbcType="VARCHAR"/>
+        <result column="PWD_ERROR_TIMES" property="pwdErrorTimes" jdbcType="INTEGER"/>
+        <result column="LAST_LOGIN_TIME" property="lastLoginTime" jdbcType="BIGINT"/>
+        <result column="EXPIRY" property="expiry" jdbcType="TIMESTAMP"/>
+        <result column="STATUS" property="status" jdbcType="VARCHAR"/>
+        <result column="WX_OPENID" property="wxOpenid" jdbcType="VARCHAR"/>
+        <result column="QQ_OPENID" property="qqOpenid" jdbcType="VARCHAR"/>
+        <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_USER" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="DEL_FLG" property="delFlg" jdbcType="VARCHAR"/>
+        <result column="VERSION" property="version" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <resultMap id="NameResponseReturn" type="com.yihexinda.auth.dto.SysUserNameResponseDto">
+        <id column="USER_ID" property="userId" jdbcType="DECIMAL"/>
+        <result column="USERNAME" property="username" jdbcType="VARCHAR"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        USER_ID, COMP_ID, DEPT_ID, USERNAME, PASSWORD, NAME, SEX, AVATAR, TEL, MOBILE, EMAIL, 
+        QQ, WECHART, ADDR, PWD_ERROR_TIMES, LAST_LOGIN_TIME, EXPIRY, STATUS, WX_OPENID, QQ_OPENID, 
+        CREATE_USER, CREATE_TIME, UPDATE_USER, UPDATE_TIME, DEL_FLG, VERSION
+    </sql>
+    <sql id="Extend_Column_List">
+        SYS_USER.USER_ID,
+        SYS_COMPANY.COMP_NUM,
+        SYS_DEPT.DEPT_NUM,
+        SYS_USER.USERNAME,
+        SYS_USER.PASSWORD,
+        SYS_USER.NAME,
+        SYS_USER.SEX,
+        SYS_USER.AVATAR,
+        SYS_USER.TEL,
+        SYS_USER.MOBILE,
+        SYS_USER.EMAIL,
+        SYS_USER.QQ,
+        SYS_USER.WECHART,
+        SYS_USER.ADDR,
+        SYS_USER.PWD_ERROR_TIMES,
+        SYS_USER.LAST_LOGIN_TIME,
+        SYS_USER.EXPIRY,
+        SYS_USER.STATUS,
+        SYS_USER.WX_OPENID,
+        SYS_USER.QQ_OPENID,
+        SYS_USER.CREATE_USER,
+        SYS_USER.CREATE_TIME,
+        SYS_USER.UPDATE_USER,
+        SYS_USER.UPDATE_TIME,
+        SYS_USER.DEL_FLG,
+        SYS_USER.VERSION,
+        SYS_COMPANY.COMP_NAME,
+        SYS_COMPANY.COMP_CITY,
+        SYS_DEPT.DEPT_NAME,
+        SYS_DEPT.DEPT_CITY
+    </sql>
+
+    <!--<sql id="Find_Sys_User_Page_Param">-->
+    <!--<where>-->
+    <!--<if test="userId != null and userId ！=''">-->
+    <!--AND USER_ID = #{userId,jdbcType=NUMERIC}-->
+    <!--</if>-->
+    <!--<if test="username != null and username != ''">-->
+    <!--and USERNAME = #{username,jdbcType=VARCHAR}-->
+    <!--</if>-->
+    <!--</where>-->
+    <!--</sql>-->
+    <select id="selectByUsername" resultMap="FindSysUserReturn" parameterType="java.lang.String">
+        select
+        <include refid="Extend_Column_List"/>
+        FROM
+        SYS_USER
+        LEFT JOIN SYS_COMPANY ON SYS_USER.COMP_ID = SYS_COMPANY.COMP_ID
+        LEFT JOIN SYS_DEPT on SYS_USER.DEPT_ID = SYS_DEPT.DEPT_ID
+        where USERNAME = #{username,jdbcType=VARCHAR}
+    </select>
+
+    <!--<select id="findSysUserLikeUserName" resultMap="NameResponseReturn">-->
+    <!--select-->
+    <!--<include refid="Extend_Column_List"/>-->
+    <!--FROM (SELECT RID-->
+    <!--FROM (SELECT R.RID, ROWNUM LINENUM-->
+    <!--FROM (SELECT ROWID RID-->
+    <!--FROM SYS_USER-->
+    <!--WHERE USERNAME like '%${name}%' or NAME like '%${name}%'-->
+    <!--ORDER BY USER_ID DESC) R-->
+    <!--WHERE ROWNUM &lt;= #{end,jdbcType=INTEGER})-->
+    <!--WHERE LINENUM &gt;= #{start,jdbcType=INTEGER}) T1,-->
+    <!--SYS_USER, SYS_COMPANY, SYS_DEPT-->
+    <!--WHERE T1.RID = SYS_USER.ROWID and SYS_USER.COMP_ID = SYS_COMPANY.COMP_ID and SYS_USER.DEPT_ID = SYS_DEPT.DEPT_ID-->
+    <!--</select>-->
+
+    <!--<select id="findUserLikeUserNameAmount" resultType="java.lang.Integer" parameterType="java.lang.String">-->
+    <!--select count(USER_ID) from SYS_USER where USERNAME like '%${name}%' or NAME like '%${name}%'-->
+    <!--</select>-->
+
+    <!--&lt;!&ndash;根据用户名来模糊查询对应的用户&ndash;&gt;-->
+    <!--<select id="findSysUserLikeName" parameterType="java.lang.String" resultMap="NameResponseReturn">-->
+    <!--select-->
+    <!--<include refid="Base_Column_List"/>-->
+    <!--from SYS_USER where NAME like '%${name}%' or USERNAME like '%${name}%'-->
+    <!--</select>-->
+
+</mapper>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.yihexinda.authservice.dao.SysMenuMapper">
+
+    <resultMap id="SysMenuDto" type="com.yihexinda.auth.dto.SysMenuDto">
+        <id column="MENU_ID" property="menuId" jdbcType="INTEGER"/>
+        <id column="SYSTEM_ID" property="systemId" jdbcType="BIGINT"/>
+        <result column="NAME" property="name" jdbcType="VARCHAR"/>
+        <result column="PATH" property="path" jdbcType="VARCHAR"/>
+        <result column="URL" property="url" jdbcType="VARCHAR"/>
+        <result column="PARENT_ID" property="parentId" jdbcType="INTEGER"/>
+        <result column="ICON" property="icon" jdbcType="VARCHAR"/>
+        <result column="SORT" property="sort" jdbcType="INTEGER"/>
+        <result column="TYPE" property="type" jdbcType="VARCHAR"/>
+        <result column="CREATE_USER" property="createUser" jdbcType="VARCHAR"/>
+        <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="UPDATE_USER" property="updateUser" jdbcType="VARCHAR"/>
+        <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="DEL_FLG" property="delFlg" jdbcType="VARCHAR"/>
+        <result column="VERSION" property="version" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        SYS_MENU.MENU_ID,
+        SYS_MENU.SYSTEM_ID,
+        SYS_MENU.NAME,
+        SYS_MENU.PATH,
+        SYS_MENU.URL,
+        SYS_MENU.PARENT_ID,
+        SYS_MENU.ICON,
+        SYS_MENU.SORT,
+        SYS_MENU.TYPE,
+        SYS_MENU.CREATE_USER,
+        SYS_MENU.CREATE_TIME,
+        SYS_MENU.UPDATE_USER,
+        SYS_MENU.UPDATE_TIME,
+        SYS_MENU.DEL_FLG,
+        SYS_MENU.VERSION
+    </sql>
+
+    <sql id="Find_Menu_Paramter">
+        <where>
+            <if test="menuId != null and menuId !=''">
+                AND MENU_ID = #{menuId,jdbcType=VARCHAR}
+            </if>
+            <if test="systemId != null and systemId !=''">
+                AND SYSTEM_ID = #{systemId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </sql>
+
+    <select id="selectBySystemIdAndUserId" resultMap="SysMenuDto"
+            parameterType="com.yihexinda.auth.dto.SysMenuQueryDto">
+        select
+        <include refid="Base_Column_List"/>
+        FROM
+        SYS_USER
+        LEFT JOIN SYS_USER_ROLE ON SYS_USER.USER_ID = SYS_USER_ROLE.USER_ID
+        LEFT JOIN SYS_ROLE ON SYS_USER_ROLE.ROLE_ID = SYS_ROLE.ROLE_ID
+        LEFT JOIN SYS_ROLE_MENU on SYS_ROLE_MENU.ROLE_ID = SYS_ROLE.ROLE_ID
+        LEFT JOIN SYS_MENU ON SYS_MENU.MENU_ID = SYS_ROLE_MENU.MENU_ID
+        where
+        1 = 1
+        <if test="systemId != null">
+            AND SYS_MENU.SYSTEM_ID = #{systemId,jdbcType=INTEGER}
+        </if>
+        and SYS_MENU.TYPE = #{type.code,jdbcType=INTEGER} and
+        SYS_USER.USER_ID = #{userId,jdbcType=INTEGER} and SYS_MENU.DEL_FLG = 0 and SYS_USER_ROLE.DEL_FLG = 0
+        and SYS_ROLE_MENU.DEL_FLG = 0 and SYS_ROLE.DEL_FLG = 0
+        group by
+        <include refid="Base_Column_List"/>
+        order by SYS_MENU.MENU_ID, SYS_MENU.PARENT_ID, SYS_MENU.SORT
+    </select>
+</mapper>

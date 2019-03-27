@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: auth-service
+  datasource:
+    platform: postgres  
+    url: jdbc:postgresql://maas1:5431/maas?useSSL=false
+    username: postgres
+    password: _Admin001
+    driver-class-name: org.postgresql.Driver
+  jackson:
+    time-zone: Asia/Shanghai
+
+server:
+  port: 8087
+
+logging:
+  level:
+    com:
+      yihexinda:
+            authservice:
+              dao: info
+---
+spring:
+  profiles: docker
+  application:
+    name: auth-service
+  datasource:
+    url: ${AUTH_DB_URL}
+    username: ${AUTH_DB_USERNAME}
+    #password: ${AUTH_DB_PASSWORD}
+    driver-class-name: oracle.jdbc.OracleDriver
+  jackson:
+    time-zone: Asia/Shanghai
+
+server:
+  port: 8087
+
+logging:
+  level:
+    com:
+      yihexinda:
+        shenhang:
+          scheduling:
+            dao: info
