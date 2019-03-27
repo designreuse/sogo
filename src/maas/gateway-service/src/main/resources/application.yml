@@ -1,0 +1,107 @@
+spring:
+  application:
+    name: gateway-service
+  redis:
+    host: localhost
+    port: 6379
+    database: 2
+    password: shenzhenair
+server:
+  port: 8000
+zuul:
+  add-host-header: true
+  add-proxy-headers: true
+  host:
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
+  routes:
+    platform-web:
+      path: /platform-web/**
+      sensitiveHeaders:
+    node-web:
+      path: /node-web/**
+      sensitiveHeaders:
+    discovery-service:
+      path: /discovery/**
+      sensitiveHeaders: Set-Cookie,Authorization
+#    test-sso-web:
+#      path: /**
+#      sensitiveHeaders:
+ribbon:
+  ReadTimeout: 60000
+hystrix:
+  command:
+    platform-web:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+    node-web:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+    discovery-service:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+    test-sso-web:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+---
+spring:
+  profiles: docker
+  application:
+    name: gateway-service
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+    database: 2
+server:
+  port: 8000
+zuul:
+  add-host-header: true
+  add-proxy-headers: true
+  host:
+    socket-timeout-millis: 60000
+    connect-timeout-millis: 60000
+  routes:
+    platform-web:
+      path: /platform-web/**
+      sensitiveHeaders:
+    node-web:
+      path: /node-web/**
+      sensitiveHeaders:
+    discovery-service:
+      path: /discovery/**
+      sensitiveHeaders: Set-Cookie,Authorization
+#    test-sso-web:
+#      path: /**
+#      sensitiveHeaders:
+ribbon:
+  ReadTimeout: 60000
+hystrix:
+  command:
+    platform-web:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+    node-web:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+    discovery-service:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
+    test-sso-web:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 600000
