@@ -1,0 +1,15 @@
+spring:
+  redis:
+    hostName: 183.62.69.35
+    port: 18008
+    database: 2
+    password: Admin001
+  kafka:
+    consumer:
+      group-id: kafka
+    bootstrap-servers: localhost:9092
+
+# 日志配置
+logging:
+  level:
+    org.springframework.web: info

@@ -1,0 +1,25 @@
+spring:
+  profiles:
+    active: prod
+  application:
+    name: buss-web
+#  freemarker:
+#    template-loader-path: classpath:/templates
+#    cache: false
+#    suffix: .ftl
+#  kafka:
+#    consumer:
+#      group-id: kafka
+#    bootstrap-servers: localhost:9092
+  jackson:
+    time-zone: Asia/Shanghai
+#    bootstrap-servers: 10.13.131.176:9094
+server:
+  port: 8099
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 60000
+        loggerLevel: basic
